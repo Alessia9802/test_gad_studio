@@ -12,7 +12,7 @@
 -Install laravel 8
 `composer create-project laravel/laravel:^8.0 .`
 
--install Inertia
+-Install Inertia
 Server-side
 `composer require inertiajs/inertia-laravel`
 
