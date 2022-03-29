@@ -84,6 +84,7 @@ protected $fillable = ['ragione_sociale', 'indirizzo', 'codice_postale', 'città
 -CRUD Steps
 
 -Create routes in file web.php
+
 `Route::get('/agencies', [AgencyController::class, 'index'])->name('agencies.index');`
 `Route::post('/agencies', [AgencyController::class, 'store'])->name('agencies.store');`
 `Route::get('/agencies/create', [AgencyController::class, 'create'])->name('agencies.create');`
