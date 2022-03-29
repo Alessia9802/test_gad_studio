@@ -7,55 +7,190 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
 </p>
 
-## About Laravel
+##Livello 1
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-Install laravel 8
+`composer create-project laravel/laravel:^8.0 .`
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-install Inertia
+Server-side
+`composer require inertiajs/inertia-laravel`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Client-side
+`npm install @inertiajs/inertia @inertiajs/inertia-vue3`
 
-## Learning Laravel
+-Create new database
+Modify file .env
+DB_PORT=8889
+DB_DATABASE=test_gad
+DB_USERNAME=root
+DB_PASSWORD=root
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+-Installing Jetstream
+`composer require laravel/jetstream`
+`php artisan jetstream:install inertia`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-Build assets
+`npm install`
+`npm run dev`
+`php artisan migrate`
 
-## Laravel Sponsors
+-Upadate laravel mix
+`npm install laravel-mix@latest`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+-Modify file package.json
 
-### Premium Partners
+"scripts": {
+"dev": "npm run development",
+"development": "mix",
+"watch": "mix watch",
+"watch-poll": "mix watch -- --watch-options-poll=1000",
+"hot": "mix watch --hot",
+"prod": "npm run production",
+"production": "mix --production"
+}
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+-Launch the server
+`php artisan serve`
 
-## Contributing
+-Install Sanctum
+composer require laravel/sanctum
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+##Livello 2
 
-## Code of Conduct
+-Create Model and migration
+`php artisan make:model Agency -m`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+-Run the migration table
+Schema::create('agencies', function (Blueprint $table) {
+$table->id();
+$table->string('ragione_sociale');
+$table->string('indirizzo');
+$table->char('codice_postale', 5)->unique();
+$table->string('città', 20);
+$table->string('provincia');
+$table->string('regione');
+$table->string('email')->unique();
+$table->timestamps();
+});
+`php artisan migrate`
 
-## Security Vulnerabilities
+-Create agency controller
+`php artisan make:controller AgencyController`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+-Modify model agency
+protected $fillable = ['ragione_sociale', 'indirizzo', 'codice_postale', 'città', 'provincia', 'regione', 'email'];
 
-## License
+-CRUD Steps
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+-Create routes in file web.php
+Route::get('/agencies', [AgencyController::class, 'index'])->name('agencies.index');
+Route::post('/agencies', [AgencyController::class, 'store'])->name('agencies.store');
+Route::get('/agencies/create', [AgencyController::class, 'create'])->name('agencies.create');
+Route::get('/agencies/{agency}/edit', [AgencyController::class, 'edit'])->name('agencies.edit');
+Route::put('/agencies/{agency}/restore', [AgencyController::class, 'restore'])->name('agencies.restore');
+Route::get('/agencies/{agency}', [AgencyController::class, 'show'])->name('agencies.show');
+Route::put('/agencies/{agency}', [AgencyController::class, 'update'])->name('agencies.update');
+Route::delete('/agencies/{agency}', [AgencyController::class, 'destroy'])->name('agencies.destroy');
+
+-Add nav-link on the dashboard
+`<jet-nav-link :href="route('agencies.index')" :active="route().current('agencies.index')"> Aziende </jet-nav-link>`
+
+-Create a new folder in Pages named Agencies and create index.vue, create.vue, edit.vue and show.vue files
+
+-On file Agency controller setup crud
+
+`class AgencyController extends Controller
+{
+
+    public function index()
+    {
+        //
+        return Inertia::render('agencies/index', ['agencies' => Agency::orderByDesc('id')->paginate(10)]);
+    }
+
+    public function create()
+    {
+        //
+        return Inertia::render('agencies/create')->with('message', "Complimenti hai aggiunto un nuovo elemento");
+    }
+
+    public function store(Request $request)
+    {
+
+         $request->validate([
+          'ragione_sociale' => 'required|max:50',
+          'indirizzo' => 'required|max:50',
+          'città' => 'required|max:50',
+          'codice_postale' => 'required|numeric|between:1,100000|min:4',
+          'provincia' => 'required|max:50',
+          'regione' => 'required|max:50',
+          'email' => 'required|max:50|email',
+        ]);
+
+
+
+      $request['user_id'] = Auth::id();
+      /* Auth::user()->create([
+        'ragione_sociale' => ['required', 'max:50'],
+          'indirizzo' => ['required', 'max:50'],
+          'città' => ['required', 'max:50'],
+          'codice_postale' => ['required', 'max:10'],
+          'provincia' => ['required', 'max:50'],
+          'regione' => ['required', 'max:50'],
+          'email' => ['required', 'max:50', 'email'],
+      ]); */
+
+
+      $agency = Agency::create($request->all());
+
+        return Redirect::route('agencies.index', $agency)->with('message', "Complimenti! Hai aggiunto un nuovo elemento");
+    }
+
+    public function show(Agency $agency)
+    {
+        //
+        return Inertia::render('agencies/show', ['agency' => $agency]);
+    }
+
+    public function edit(Agency $agency)
+    {
+        //
+        return Inertia::render('agencies/edit', [
+            'agency' => [
+                'id' => $agency->id,
+                'ragione_sociale' => $agency->ragione_sociale,
+                'indirizzo' => $agency->indirizzo,
+                'città' => $agency->città,
+                'codice_postale' => $agency->codice_postale,
+                'provincia' => $agency->provincia,
+                'regione' => $agency->regione,
+                'email' => $agency->email,
+            ],
+        ]);
+         //return Inertia::render('agencies/{id}/edit', ['agency' => $agency]);
+    }
+
+    public function update(Request $request, Agency $agency)
+    {
+        //
+
+        $agency->update($request->all());
+        return Redirect::route('agencies.index');
+    }
+
+    public function destroy(Agency $agency)
+    {
+        //
+        $agency->delete();
+        return Redirect::route('agencies.index')->with('message', "Hai eliminato definitivamente un elemento con successo.");
+    }
+
+    public function restore(Agency $Agency)
+    {
+        $Agency->restore();
+
+        return Redirect::back()->with('message', 'Hai aggiornato questo elemento.');
+    }
+
+}`
