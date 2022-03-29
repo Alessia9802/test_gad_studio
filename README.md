@@ -84,14 +84,14 @@ protected $fillable = ['ragione_sociale', 'indirizzo', 'codice_postale', 'città
 -CRUD Steps
 
 -Create routes in file web.php
-Route::get('/agencies', [AgencyController::class, 'index'])->name('agencies.index');
-Route::post('/agencies', [AgencyController::class, 'store'])->name('agencies.store');
-Route::get('/agencies/create', [AgencyController::class, 'create'])->name('agencies.create');
-Route::get('/agencies/{agency}/edit', [AgencyController::class, 'edit'])->name('agencies.edit');
-Route::put('/agencies/{agency}/restore', [AgencyController::class, 'restore'])->name('agencies.restore');
-Route::get('/agencies/{agency}', [AgencyController::class, 'show'])->name('agencies.show');
-Route::put('/agencies/{agency}', [AgencyController::class, 'update'])->name('agencies.update');
-Route::delete('/agencies/{agency}', [AgencyController::class, 'destroy'])->name('agencies.destroy');
+`Route::get('/agencies', [AgencyController::class, 'index'])->name('agencies.index');`
+`Route::post('/agencies', [AgencyController::class, 'store'])->name('agencies.store');`
+`Route::get('/agencies/create', [AgencyController::class, 'create'])->name('agencies.create');`
+`Route::get('/agencies/{agency}/edit', [AgencyController::class, 'edit'])->name('agencies.edit');`
+`Route::put('/agencies/{agency}/restore', [AgencyController::class, 'restore'])->name('agencies.restore');`
+`Route::get('/agencies/{agency}', [AgencyController::class, 'show'])->name('agencies.show');`
+`Route::put('/agencies/{agency}', [AgencyController::class, 'update'])->name('agencies.update');`
+`Route::delete('/agencies/{agency}', [AgencyController::class, 'destroy'])->name('agencies.destroy');`
 
 -Add nav-link on the dashboard
 `<jet-nav-link :href="route('agencies.index')" :active="route().current('agencies.index')"> Aziende </jet-nav-link>`
@@ -194,3 +194,364 @@ Route::delete('/agencies/{agency}', [AgencyController::class, 'destroy'])->name(
     }
 
 }`
+
+-Create a table on file index.vue
+
+-Create a form for new Agency
+
+`<form @submit.prevent="store">
+
+<h6
+                                            class="text-blueGray-600 text-sm mt-3 mb-6 font-bold uppercase"
+                                        >
+Informazioni
+</h6>
+<div class="flex flex-wrap">
+<!-- Ragione sociale -->
+<div class="w-full lg:w-6/12 px-4">
+<div
+                                                    class="relative w-full mb-3"
+                                                >
+<label
+                                                        for="ragione_sociale"
+                                                        class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                                        htmlfor="grid-password"
+                                                    >
+Ragione sociale
+<span
+                                                            class="text-red-500"
+                                                            >\*</span
+                                                        >
+</label>
+
+                                                    <input
+                                                        id="ragione_sociale"
+                                                        v-model="
+                                                            form.ragione_sociale
+                                                        "
+                                                        type="text"
+                                                        class="border-0 px-3 py-3 placeholder-blueGray-400 text-blueGray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all"
+                                                        placeholder="Inserisci nome attività"
+                                                    />
+                                                    <div
+                                                        class="text-red-500 text-sm"
+                                                        v-if="
+                                                            form.errors
+                                                                .ragione_sociale
+                                                        "
+                                                    >
+                                                        {{
+                                                            form.errors
+                                                                .ragione_sociale
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Email -->
+                                            <div class="w-full lg:w-6/12 px-4">
+                                                <div
+                                                    class="relative w-full mb-3"
+                                                >
+                                                    <label
+                                                        for="email"
+                                                        class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                                        htmlfor="grid-password"
+                                                    >
+                                                        Indirizzo Email
+                                                        <span
+                                                            class="text-red-500"
+                                                            >*</span
+                                                        >
+                                                    </label>
+                                                    <input
+                                                        type="email"
+                                                        id="email"
+                                                        required
+                                                        v-model="form.email"
+                                                        class="border-0 focus:outline-none focus:shadow-outline px-3 py-3 placeholder-blueGray-400 text-blueGray-600 bg-white rounded text-sm shadow w-full transition-all duration-100"
+                                                        placeholder="email@example.com"
+                                                    />
+                                                </div>
+                                                <div
+                                                    class="text-red-500 text-sm"
+                                                    v-if="form.errors.email"
+                                                >
+                                                    {{ form.errors.email }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr
+                                            class="mt-6 border-b-1 border-blueGray-300"
+                                        />
+                                        <!-- Seconda sezione -->
+                                        <h6
+                                            class="text-blueGray-600 text-sm mt-3 mb-6 font-bold uppercase"
+                                        >
+                                            Contatti
+                                        </h6>
+                                        <div class="flex flex-wrap">
+                                            <!-- Indirizzo -->
+                                            <div class="w-full lg:w-6/12 px-4">
+                                                <div
+                                                    class="relative w-full mb-3"
+                                                >
+                                                    <label
+                                                        for="indirizzo"
+                                                        class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                                        htmlfor="grid-password"
+                                                    >
+                                                        Indirizzo
+                                                        <span
+                                                            class="text-red-500"
+                                                            >*</span
+                                                        >
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        id="indirizzo"
+                                                        v-model="form.indirizzo"
+                                                        class="border-0 px-3 py-3 placeholder-blueGray-400 text-blueGray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all"
+                                                        placeholder="Es. Via Roma, 2"
+                                                    />
+                                                    <div
+                                                        class="text-red-500 text-sm"
+                                                        v-if="
+                                                            form.errors
+                                                                .indirizzo
+                                                        "
+                                                    >
+                                                        {{
+                                                            form.errors
+                                                                .indirizzo
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Provincia -->
+                                            <div class="w-full lg:w-6/12 px-4">
+                                                <div
+                                                    class="relative w-full mb-3"
+                                                >
+                                                    <label
+                                                        for="provincia"
+                                                        class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                                        htmlfor="grid-password"
+                                                    >
+                                                        Provincia
+                                                        <span
+                                                            class="text-red-500"
+                                                            >*</span
+                                                        >
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        id="provincia"
+                                                        v-model="form.provincia"
+                                                        class="border-0 px-3 py-3 placeholder-blueGray-400 text-blueGray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all"
+                                                        placeholder="Es. Milano"
+                                                    />
+                                                    <div
+                                                        class="text-red-500 text-sm"
+                                                        v-if="
+                                                            form.errors
+                                                                .provincia
+                                                        "
+                                                    >
+                                                        {{
+                                                            form.errors
+                                                                .provincia
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Città -->
+                                            <div class="w-full lg:w-4/12 px-4">
+                                                <div
+                                                    class="relative w-full mb-3"
+                                                >
+                                                    <label
+                                                        for="città"
+                                                        class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                                        htmlfor="grid-password"
+                                                    >
+                                                        Città
+                                                        <span
+                                                            class="text-red-500"
+                                                            >*</span
+                                                        >
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        id="città"
+                                                        v-model="form.città"
+                                                        class="border-0 px-3 py-3 placeholder-blueGray-400 text-blueGray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all"
+                                                        placeholder="Es. Milano(MI)"
+                                                    />
+                                                    <div
+                                                        class="text-red-500 text-sm"
+                                                        v-if="form.errors.città"
+                                                    >
+                                                        {{ form.errors.città }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Regione -->
+                                            <div class="w-full lg:w-4/12 px-4">
+                                                <div
+                                                    class="relative w-full mb-3"
+                                                >
+                                                    <label
+                                                        for="regione"
+                                                        class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                                        htmlfor="grid-password"
+                                                    >
+                                                        Regione
+                                                        <span
+                                                            class="text-red-500"
+                                                            >*</span
+                                                        >
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="regione"
+                                                        v-model="form.regione"
+                                                        class="border-0 px-3 py-3 placeholder-blueGray-400 text-blueGray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all"
+                                                        placeholder="Es. Lombardia"
+                                                    />
+                                                    <div
+                                                        class="text-red-500 text-sm"
+                                                        v-if="
+                                                            form.errors.regione
+                                                        "
+                                                    >
+                                                        {{
+                                                            form.errors.regione
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Postal code -->
+                                            <div class="w-full lg:w-4/12 px-4">
+                                                <div
+                                                    class="relative w-full mb-3"
+                                                >
+                                                    <label
+                                                        for="codice_postale"
+                                                        class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                                        htmlfor="grid-password"
+                                                    >
+                                                        CAP
+                                                        <span
+                                                            class="text-red-500"
+                                                            >*</span
+                                                        >
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        id="codice_postale"
+                                                        v-model="
+                                                            form.codice_postale
+                                                        "
+                                                        class="border-0 px-3 py-3 placeholder-blueGray-400 text-blueGray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all"
+                                                        placeholder="Es. 20081"
+                                                    />
+                                                    <div
+                                                        class="text-red-500 text-sm"
+                                                        v-if="
+                                                            form.errors
+                                                                .codice_postale
+                                                        "
+                                                    >
+                                                        {{
+                                                            form.errors
+                                                                .codice_postale
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Button create -->
+                                        <div class="flex p-2">
+                                            <button
+                                                class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded"
+                                                type="submit"
+                                                :disabled="form.processing"
+                                            >
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </form>`
+
+-Flash Messages: modify file HandleInertiaRequests
+
+`class HandleInertiaRequests extends Middleware
+{
+/\*\*
+_ The root template that's loaded on the first page visit.
+_
+_ @see https://inertiajs.com/server-side-setup#root-template
+_ @var string
+\*/
+protected $rootView = 'app';
+
+    /**
+     * Determines the current asset version.
+     *
+     * @see https://inertiajs.com/asset-versioning
+     * @param  \Illuminate\Http\Request  $request
+     * @return string|null
+     */
+    public function version(Request $request): ?string
+    {
+        return parent::version($request);
+    }
+
+    /**
+     * Defines the props that are shared by default.
+     *
+     * @see https://inertiajs.com/shared-data
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function share(Request $request): array
+    {
+        return array_merge(parent::share($request), [
+            'auth' => function () use ($request) {
+                return [
+                    'user' => $request->user() ? [
+                        'id' => $request->user()->id,
+                        'name' => $request->user()->name,
+                        'surname' => $request->user()->surname,
+                        'email' => $request->user()->email,
+                    ] : null,
+                ];
+            },
+            'flash' => [
+                'message' => fn () => $request->session()->get('message')
+            ],
+            //
+        ]);
+    }
+
+}
+`
+
+##Livello 3
+
+-Create Seeder for agencies
+`php artisan make:seeder AgencySeeder`
+
+-Modify file AgencySeeder
+
+`class AgencySeeder extends Seeder { /** * Run the database seeds. * * @return void */ public function run(Faker $faker) { // for ($i = 0; $i < 100000; $i++) { $agency = new Agency(); $agency->ragione_sociale = $faker->company(); $agency->indirizzo = $faker->address(); $agency->città = $faker->city(); $agency->codice_postale = $faker->postcode(); $agency->provincia = $faker->state(); $agency->regione = $faker->country(); $agency->email = $faker->email(); $agency->save(); } } }`
+
+-Running Seeder
+`php artisan migrate:fresh --seed`
+
+-Generate 100.000 agencies with Faker
+`php artisan db:seed --class=UserSeeder`
